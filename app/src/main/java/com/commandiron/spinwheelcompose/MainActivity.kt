@@ -3,13 +3,9 @@ package com.commandiron.spinwheelcompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,11 +13,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.commandiron.spin_wheel_compose.SpinWheel
-import com.commandiron.spin_wheel_compose.SpinWheelDefaults
 import com.commandiron.spin_wheel_compose.state.rememberSpinWheelState
 import com.commandiron.spinwheelcompose.ui.theme.SpinWheelComposeTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -42,12 +37,21 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    val state = rememberSpinWheelState()
+                    val state = rememberSpinWheelState(pieCount = textList.size)
                     val scope = rememberCoroutineScope()
 
                     SpinWheel(
                         state = state,
-                        onClick = { scope.launch { state.animate {pieIndex -> } } }
+                        onClick = {
+                            scope.launch {
+                                state.infiniteSpin()
+                            }
+
+                            scope.launch {
+                                delay(6000)
+                                state.stopOn(3)
+                            }
+                        }
                     ){ pieIndex ->
                         Text(text = textList[pieIndex])
                     }
